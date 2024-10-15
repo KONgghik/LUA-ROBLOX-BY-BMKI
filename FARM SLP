@@ -1,0 +1,96 @@
+_G.AntiKick = true
+spawn(function()
+while _G.AntiKick do
+    for i,v in pairs(game.CoreGui.RobloxPromptGui.promptOverlay:GetDescendants()) do
+        if v.Name == "ErrorPrompt" then
+            wait(1)
+            game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
+        end
+    end
+    task.wait()
+end
+end)
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local RootPart = Character:WaitForChild("HumanoidRootPart")
+
+local function GetClosestPlayer()
+    local closestDistance = math.huge
+    local closestPlayer = nil
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character then
+            local playerRoot = player.Character:FindFirstChild("HumanoidRootPart")
+            if playerRoot then
+                local distance = (RootPart.Position - playerRoot.Position).Magnitude
+                if distance < closestDistance then
+                    closestDistance = distance
+                    closestPlayer = player
+                end
+            end
+        end
+    end
+    return closestPlayer
+end
+spawn(function()
+    local closestPlayer = GetClosestPlayer()
+    if closestPlayer and closestPlayer.Character then
+        local targetRootPart = closestPlayer.Character:WaitForChild("HumanoidRootPart")
+        RootPart.CFrame = targetRootPart.CFrame -- Teleport local player to the closest player's position
+    end
+    
+    local args = {
+        [1] = closestPlayer,
+        [2] = false
+    }
+    game:GetService("RunService").RenderStepped:Connect(function()
+        game:GetService("ReplicatedStorage").Events.Boxing:FireServer(unpack(args))
+    end)
+end)
+spawn(function()
+    local closestPlayer = GetClosestPlayer()
+    
+    local args = {
+        [1] = closestPlayer,
+        [2] = false
+    }
+    game:GetService("RunService").RenderStepped:Connect(function()
+        game:GetService("ReplicatedStorage").Events.Boxing:FireServer(unpack(args))
+    end)
+end)
+spawn(function()
+    game:GetService("RunService").RenderStepped:Connect(function()
+    local closestPlayer = GetClosestPlayer()
+    if closestPlayer and closestPlayer.Character then
+        local targetRootPart = closestPlayer.Character:WaitForChild("HumanoidRootPart")
+        RootPart.CFrame = targetRootPart.CFrame -- Teleport local player to the closest player's position
+    end
+    
+    local args = {
+        [1] = closestPlayer,
+        [2] = false
+    }
+    end)
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
